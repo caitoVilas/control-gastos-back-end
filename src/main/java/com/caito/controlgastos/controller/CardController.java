@@ -2,7 +2,6 @@ package com.caito.controlgastos.controller;
 
 import com.caito.controlgastos.dto.CardResponse;
 import com.caito.controlgastos.dto.NewCard;
-import com.caito.controlgastos.entity.Card;
 import com.caito.controlgastos.service.impl.CardService;
 import javassist.NotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,9 +32,9 @@ public class CardController {
     }
 
     @GetMapping
-    public ResponseEntity<List<Card>> getAllCards(){
+    public ResponseEntity<List<CardResponse>> getAllCards(){
 
-        return new ResponseEntity<List<Card>>(service.getAllCards(), HttpStatus.OK);
+        return new ResponseEntity<List<CardResponse>>(service.getAllCards(), HttpStatus.OK);
     }
 
     @DeleteMapping("{id}")

@@ -6,24 +6,22 @@ import com.caito.controlgastos.dto.NewCard;
 import com.caito.controlgastos.entity.Card;
 import com.caito.controlgastos.exceptions.customs.BadRequestException;
 import com.caito.controlgastos.repository.CardRepository;
-import com.caito.controlgastos.repository.CreditCardRepository;
 import com.caito.controlgastos.service.ICardService;
 import javassist.NotFoundException;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
+@Transactional
 public class CardService implements ICardService {
 
     @Autowired
     private CardRepository repository;
-    @Autowired
-    private CreditCardRepository creditCardRepository;
 
 
     @Override
@@ -55,26 +53,33 @@ public class CardService implements ICardService {
     }
 
     @Override
-    public List<Card> getAllCards() {
-        return repository.findAll();
-    }
+    public List<CardResponse> getAllCards() {
 
-    @Override
-    public Page<Card> getAllCardsPage(Pageable pageable) {
-        return repository.findAll(pageable);
+        List<CardResponse> cards = repository.findAll()
+                .stream()
+                .map(this::cardToDto)
+                .collect(Collectors.toList());
+        return cards;
     }
 
     @Override
     public void deleteCard(Long id) throws NotFoundException {
+
         if (id == null){
             throw new BadRequestException(ConstantsExceptionMessages.MSG_CARD_NOT_ID);
         }
 
         Card card = repository.findById(id).orElseThrow(()-> new NotFoundException(
                 ConstantsExceptionMessages.MSG_CARD_NOT_FOUND));
-        if (creditCardRepository.existsByCard(card)){
-            throw new BadRequestException(ConstantsExceptionMessages.MSG_CARD_IN_USE);
-        }
+
         repository.deleteById(id);
+
+    }
+
+    private CardResponse cardToDto(Card card){
+
+        ModelMapper mapper = new ModelMapper();
+        CardResponse cardResponse = mapper.map(card, CardResponse.class);
+        return cardResponse;
     }
 }
