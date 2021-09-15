@@ -11,7 +11,7 @@ import lombok.Setter;
 @Setter
 public class NewCreditCard {
 
-    private Long instituion_id;
+    private Long institution_id;
     private Long card_id;
     private Long user_id;
 
