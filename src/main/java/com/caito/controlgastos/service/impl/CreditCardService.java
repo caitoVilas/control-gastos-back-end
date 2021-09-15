@@ -48,11 +48,7 @@ public class CreditCardService implements ICreditCardService {
             throw new BadRequestException(ConstantsExceptionMessages.MSG_CC_NOT_USEER_ID);
         }
 
-        if (repository.existsByUserAndInstitutionAndCard(newCreditCard.getUser_id(),
-                newCreditCard.getInstitution_id(),
-                newCreditCard.getCard_id())) {
-            throw new BadRequestException(ConstantsExceptionMessages.MSG_CC_EXISTS);
-        }
+
 
 
         User user = userRepository.findById(newCreditCard.getUser_id()).orElseThrow(() -> new NotFoundException(
@@ -61,6 +57,10 @@ public class CreditCardService implements ICreditCardService {
                 new NotFoundException(ConstantsExceptionMessages.MSG_INST_NOT_FOUND));
         Card card = cardRepository.findById(newCreditCard.getCard_id()).orElseThrow(() -> new NotFoundException(
                 ConstantsExceptionMessages.MSG_CARD_NOT_FOUND));
+
+        if (repository.existsByUserAndInstitutionAndCard(user, institution, card)) {
+            throw new BadRequestException(ConstantsExceptionMessages.MSG_CC_EXISTS);
+        }
         CreditCard creditCard = new CreditCard();
         creditCard.setUser(user);
         creditCard.setInstitution(institution);

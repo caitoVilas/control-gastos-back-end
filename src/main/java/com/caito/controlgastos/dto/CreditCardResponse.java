@@ -16,6 +16,6 @@ public class CreditCardResponse {
     private Long id;
     private UserResponse user;
     private InstitutionResponse institution;
-    private CardResponse crard;
+    private CardResponse card;
     private LocalDateTime created;
 }
