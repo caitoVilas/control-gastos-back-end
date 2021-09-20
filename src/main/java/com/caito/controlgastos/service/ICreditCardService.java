@@ -11,8 +11,9 @@ import java.util.List;
 @Service
 public interface ICreditCardService {
 
-    public CreditCard createCreditCard(NewCreditCard newCreditCard) throws NotFoundException;
+    public CreditCardResponse createCreditCard(NewCreditCard newCreditCard) throws NotFoundException;
     public CreditCardResponse getCreditCard(Long id) throws NotFoundException;
     public List<CreditCardResponse> getAllCreditsCard();
     public void deleteCreditCard(Long id) throws NotFoundException;
+    public List<CreditCardResponse> getMyCreditsCards(Long user_id) throws NotFoundException;
 }

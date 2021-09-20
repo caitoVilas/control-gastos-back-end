@@ -36,7 +36,7 @@ public class CreditCardService implements ICreditCardService {
 
 
     @Override
-    public CreditCard createCreditCard(NewCreditCard newCreditCard) throws NotFoundException {
+    public CreditCardResponse createCreditCard(NewCreditCard newCreditCard) throws NotFoundException {
 
         if (newCreditCard.getCard_id() == null) {
             throw new BadRequestException(ConstantsExceptionMessages.MSG_CC_NOT_CARD_ID);
@@ -67,21 +67,10 @@ public class CreditCardService implements ICreditCardService {
         creditCard.setCard(card);
 
         repository.save(creditCard);
-        return creditCard;
 
-
-
-        /*CreditCardResponse response = new CreditCardResponse(creditCard.getId(),
-                                                             user,
-                                                             institution,
-                                                             card,
-                                                             creditCard.getCreation());
-
-        return response;
         ModelMapper mapper = new ModelMapper();
-        repository.save(mapper.map(newCreditCard, CreditCard.class));
-        return mapper.map(newCreditCard, CreditCard.class);*/
 
+        return mapper.map(creditCard, CreditCardResponse.class);
     }
 
 
@@ -121,6 +110,19 @@ public class CreditCardService implements ICreditCardService {
                 ConstantsExceptionMessages.MSG_CC_NOT_FOUD ));
 
         repository.deleteById(id);
+    }
+
+    @Override
+    public List<CreditCardResponse> getMyCreditsCards(Long user_id) throws NotFoundException {
+
+        User user = userRepository.findById(user_id).orElseThrow(() -> new NotFoundException(
+                ConstantsExceptionMessages.MSG_USER_NOT_FOUND));
+
+        List<CreditCardResponse> cards = repository.findAllByUser(user)
+                .stream()
+                .map(this::creditCardToDto)
+                .collect(Collectors.toList());
+        return cards;
     }
 
     private CardResponse getCard(Long id) throws NotFoundException {

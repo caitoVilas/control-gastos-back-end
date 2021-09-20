@@ -21,10 +21,10 @@ public class CreditCardController {
     private CreditCardService service;
 
     @PostMapping
-    public ResponseEntity<CreditCard> createCreditCard(@RequestBody NewCreditCard newCreditCard)
+    public ResponseEntity<CreditCardResponse> createCreditCard(@RequestBody NewCreditCard newCreditCard)
             throws NotFoundException {
 
-        return new ResponseEntity<CreditCard>(service.createCreditCard(newCreditCard),
+        return new ResponseEntity<CreditCardResponse>(service.createCreditCard(newCreditCard),
                 HttpStatus.CREATED);
     }
 
@@ -46,5 +46,12 @@ public class CreditCardController {
         service.deleteCreditCard(id);
 
         return new ResponseEntity(HttpStatus.OK);
+   }
+
+   @GetMapping("/my-cards/{user_id}")
+   public ResponseEntity<List<CreditCardResponse>> getMyCreditCards(@PathVariable("user_id") Long user_id)
+           throws NotFoundException {
+
+        return new ResponseEntity<List<CreditCardResponse>>(service.getMyCreditsCards(user_id), HttpStatus.OK);
    }
 }
